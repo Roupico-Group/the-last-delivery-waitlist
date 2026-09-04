@@ -488,12 +488,24 @@
       }
 
       @media (max-width: 820px) {
+        body {
+          overflow-y: auto;
+        }
+
+        .app {
+          height: auto;
+          min-height: 100svh;
+          overflow: visible;
+        }
+
         .topbar {
           padding-top: 12px;
         }
 
         .hero {
-          padding: 72px 24px 32px;
+          min-height: 100svh;
+          height: auto;
+          padding: 80px 24px 42px;
         }
 
         .hero::after {
@@ -516,10 +528,16 @@
           transform: rotateY(-126deg);
         }
 
+        .hero-copy {
+          flex: 0 0 auto;
+          justify-content: flex-start;
+          padding-top: 20px;
+        }
+
         .author-note {
           top: auto;
           right: 24px;
-          bottom: 30px;
+          bottom: 42px;
           width: min(48vw, 240px);
           transform: none;
         }
