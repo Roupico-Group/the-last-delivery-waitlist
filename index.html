@@ -503,6 +503,7 @@
         }
 
         .hero {
+          flex-direction: column;
           min-height: 100svh;
           height: auto;
           padding: 80px 24px 42px;
@@ -530,6 +531,7 @@
 
         .hero-copy {
           flex: 0 0 auto;
+          width: 100%;
           justify-content: flex-start;
           padding-top: 20px;
         }
@@ -538,7 +540,9 @@
           top: auto;
           right: 24px;
           bottom: 42px;
-          width: min(48vw, 240px);
+          left: 24px;
+          width: auto;
+          text-align: center;
           transform: none;
         }
 
