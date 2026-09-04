@@ -520,6 +520,16 @@
           max-width: 86vw;
         }
 
+        .cover-fill {
+          position: relative;
+          inset: auto;
+          z-index: 0;
+          order: 2;
+          width: 100%;
+          min-height: min(132vw, 540px);
+          margin: 8px 0 24px;
+        }
+
         .registration-open .book-object {
           transform: translateY(-14vh) scale(0.92);
         }
@@ -531,17 +541,22 @@
 
         .hero-copy {
           flex: 0 0 auto;
+          order: 1;
           width: 100%;
           justify-content: flex-start;
           padding-top: 20px;
         }
 
         .author-note {
+          position: relative;
+          z-index: 1;
           top: auto;
-          right: 24px;
-          bottom: 42px;
-          left: 24px;
-          width: auto;
+          right: auto;
+          bottom: auto;
+          left: auto;
+          order: 3;
+          width: 100%;
+          margin-top: 0;
           text-align: center;
           transform: none;
         }
