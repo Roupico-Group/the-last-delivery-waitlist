@@ -1,0 +1,671 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Last Delivery Waitlist</title>
+    <meta
+      name="description"
+      content="A release waitlist page for The Last Delivery."
+    />
+    <style>
+      :root {
+        --ink: #171412;
+        --paper: #fff8ee;
+        --red: #8f2f2f;
+        --green: #315f51;
+        --shadow: 0 28px 80px rgba(11, 8, 5, 0.42);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        color: var(--paper);
+        background: var(--ink);
+        overflow: hidden;
+      }
+
+      body.registration-open {
+        overflow: hidden;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      .app {
+        height: 100svh;
+        overflow: hidden;
+      }
+
+      .topbar {
+        position: fixed;
+        z-index: 30;
+        top: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        justify-content: flex-end;
+        padding: 18px clamp(18px, 4vw, 52px);
+        background: linear-gradient(
+          to bottom,
+          rgba(10, 8, 7, 0.78),
+          rgba(10, 8, 7, 0)
+        );
+        pointer-events: none;
+      }
+
+      .counter {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 13px;
+        color: #fff9ec;
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        border-radius: 999px;
+        background: rgba(23, 20, 18, 0.48);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+        backdrop-filter: blur(16px);
+        pointer-events: auto;
+      }
+
+      .facebook-link {
+        display: grid;
+        width: 40px;
+        height: 40px;
+        place-items: center;
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        border-radius: 50%;
+        color: #fff;
+        background: rgba(24, 119, 242, 0.82);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+        pointer-events: auto;
+        text-decoration: none;
+        transition:
+          background 180ms ease,
+          transform 180ms ease;
+      }
+
+      .facebook-link:hover {
+        background: #1877f2;
+        transform: translateY(-1px);
+      }
+
+      .facebook-link svg {
+        width: 20px;
+        height: 20px;
+        fill: currentColor;
+      }
+
+      .pulse {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: #77e2a8;
+        box-shadow: 0 0 0 0 rgba(119, 226, 168, 0.72);
+        animation: pulse 1.8s infinite;
+      }
+
+      .counter strong {
+        min-width: 3.5ch;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .counter span:last-child {
+        color: rgba(255, 249, 236, 0.72);
+        font-size: 0.88rem;
+      }
+
+      .hero {
+        position: relative;
+        display: flex;
+        height: 100svh;
+        padding: 88px clamp(20px, 5vw, 72px) 40px;
+        isolation: isolate;
+        background:
+          radial-gradient(circle at 50% 42%, rgba(89, 49, 45, 0.36), transparent 34%),
+          radial-gradient(circle at 50% 46%, rgba(255, 255, 255, 0.08), transparent 18%),
+          linear-gradient(90deg, #020202, #15100f 28%, #17100f 50%, #15100f 72%, #020202);
+      }
+
+      .hero::before {
+        position: absolute;
+        inset: 0;
+        z-index: -4;
+        content: "";
+        background: url("assets/the-last-delivery-cover.jpg") center / cover no-repeat;
+        filter: blur(24px) brightness(0.34) saturate(0.9);
+        opacity: 0.62;
+        transform: scale(1.08);
+      }
+
+      .hero::after {
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        content: "";
+        background:
+          radial-gradient(ellipse at center, transparent 22%, rgba(0, 0, 0, 0.42) 72%),
+          linear-gradient(90deg, rgba(0, 0, 0, 0.92), transparent 24%, transparent 76%, rgba(0, 0, 0, 0.92)),
+          linear-gradient(to top, rgba(0, 0, 0, 0.28), transparent 24%),
+          linear-gradient(to bottom, rgba(0, 0, 0, 0.42), transparent 28%);
+        transition: opacity 420ms ease;
+      }
+
+      .registration-open .hero::after {
+        opacity: 0.46;
+      }
+
+      .cover-fill {
+        position: absolute;
+        inset: 0;
+        z-index: -2;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        perspective: 1800px;
+      }
+
+      .book-object {
+        position: relative;
+        width: min(63vh, 520px);
+        max-width: min(66vw, 520px);
+        aspect-ratio: 0.667;
+        transform-style: preserve-3d;
+        transition: transform 1000ms cubic-bezier(0.2, 0.84, 0.22, 1);
+      }
+
+      .inside-page {
+        position: absolute;
+        inset: 0;
+        border-radius: 4px 12px 12px 4px;
+        background:
+          linear-gradient(90deg, rgba(0, 0, 0, 0.16), transparent 13%),
+          radial-gradient(circle at 80% 18%, rgba(143, 47, 47, 0.08), transparent 28%),
+          repeating-linear-gradient(#fff8ee, #fff8ee 30px, #f1e4d2 31px);
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.12),
+          0 34px 110px rgba(0, 0, 0, 0.74);
+      }
+
+      .inside-page::before {
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 18px;
+        content: "";
+        background: linear-gradient(90deg, rgba(0, 0, 0, 0.22), transparent);
+      }
+
+      .cover-art {
+        position: absolute;
+        inset: 0;
+        border-radius: 4px 12px 12px 4px;
+        background:
+          linear-gradient(90deg, rgba(0, 0, 0, 0.46), transparent 10%),
+          url("assets/the-last-delivery-cover.jpg") center / cover no-repeat;
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.12),
+          0 34px 110px rgba(0, 0, 0, 0.74),
+          0 0 120px rgba(134, 48, 45, 0.32);
+        transform: rotateY(0deg);
+        transform-origin: left center;
+        transform-style: preserve-3d;
+        transition:
+          filter 1000ms cubic-bezier(0.2, 0.84, 0.22, 1),
+          transform 1250ms cubic-bezier(0.2, 0.84, 0.22, 1),
+          box-shadow 1250ms cubic-bezier(0.2, 0.84, 0.22, 1);
+      }
+
+      .cover-art::before {
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 26px;
+        content: "";
+        background: linear-gradient(90deg, rgba(0, 0, 0, 0.5), transparent);
+        pointer-events: none;
+      }
+
+      .cover-art::after {
+        position: absolute;
+        inset: 0;
+        content: "";
+        border-radius: inherit;
+        background: linear-gradient(90deg, rgba(0, 0, 0, 0.28), transparent 42%);
+        opacity: 0;
+        transition: opacity 900ms ease;
+      }
+
+      .registration-open .book-object {
+        transform: translateX(-9vw);
+      }
+
+      .registration-open .cover-art {
+        filter: brightness(0.62);
+        box-shadow:
+          -22px 24px 70px rgba(0, 0, 0, 0.54),
+          0 0 0 1px rgba(255, 255, 255, 0.08);
+        transform: rotateY(-138deg);
+      }
+
+      .registration-open .cover-art::after {
+        opacity: 1;
+      }
+
+      .hero-copy {
+        display: flex;
+        max-width: 380px;
+        flex: 1;
+        margin: 0;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        text-align: left;
+        transition:
+          opacity 100ms ease,
+          transform 160ms ease;
+      }
+
+      .registration-open .hero-copy {
+        opacity: 0;
+        transform: translateY(16px);
+        pointer-events: none;
+      }
+
+      .author-note {
+        position: absolute;
+        z-index: 1;
+        top: 50%;
+        right: clamp(20px, 5vw, 72px);
+        width: min(24vw, 300px);
+        color: rgba(255, 249, 236, 0.78);
+        text-align: right;
+        transform: translateY(-50%);
+        transition:
+          opacity 100ms ease,
+          transform 160ms ease;
+      }
+
+      .author-note h2 {
+        margin: 0 0 12px;
+        color: #fff8ee;
+        font-size: clamp(1.1rem, 1.6vw, 1.45rem);
+        font-weight: 800;
+        letter-spacing: 0;
+      }
+
+      .author-note p {
+        margin: 0;
+        font-size: clamp(0.95rem, 1.15vw, 1.08rem);
+        line-height: 1.55;
+      }
+
+      .registration-open .author-note {
+        opacity: 0;
+        transform: translateY(calc(-50% + 16px));
+        pointer-events: none;
+      }
+
+      .hero-title {
+        margin: 0;
+        color: rgba(255, 248, 238, 0.84);
+        font-size: clamp(1.65rem, 3vw, 3rem);
+        font-weight: 800;
+        letter-spacing: 0;
+        line-height: 1.04;
+        text-transform: uppercase;
+      }
+
+      .hero-title span {
+        display: block;
+        white-space: nowrap;
+      }
+
+      .hero-title .hero-title-secondary {
+        margin-top: 0.1em;
+        width: 100%;
+        font-size: 0.88em;
+        text-align: justify;
+        text-align-last: justify;
+      }
+
+      .hero-text {
+        max-width: 450px;
+        margin: 20px 0 30px;
+        color: rgba(255, 249, 236, 0.78);
+        font-size: clamp(1rem, 2vw, 1.22rem);
+        line-height: 1.55;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 13px;
+      }
+
+      .register {
+        min-height: 52px;
+        padding: 0 22px;
+        border: 0;
+        border-radius: 999px;
+        color: #1f1810;
+        background: #fff6e5;
+        box-shadow: 0 16px 42px rgba(0, 0, 0, 0.22);
+        font-weight: 700;
+      }
+
+      .register:hover {
+        background: #fff;
+      }
+
+      .waitlist-panel {
+        position: fixed;
+        z-index: 25;
+        top: 50%;
+        left: 50%;
+        width: min(360px, calc(100vw - 52px));
+        padding: clamp(22px, 4vw, 34px);
+        color: #24170f;
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        border-radius: 8px;
+        background: transparent;
+        box-shadow: none;
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(calc(-50% - 9vw), -42%) scale(0.96);
+        transition:
+          opacity 100ms ease,
+          transform 160ms cubic-bezier(0.2, 0.84, 0.22, 1);
+      }
+
+      .registration-open .waitlist-panel {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translate(calc(-50% - 9vw), -50%) scale(1);
+        transition-delay: 660ms, 660ms;
+      }
+
+      .waitlist-panel h2 {
+        margin: 0 0 10px;
+        color: #24170f;
+        font-size: clamp(1.8rem, 5vw, 2.5rem);
+        font-weight: 800;
+        letter-spacing: 0;
+        line-height: 1.04;
+      }
+
+      .waitlist-panel p {
+        margin: 0 0 22px;
+        color: rgba(36, 23, 15, 0.68);
+        line-height: 1.5;
+      }
+
+      .close {
+        position: absolute;
+        top: -14px;
+        right: -14px;
+        width: 42px;
+        height: 42px;
+        border: 0;
+        border-radius: 50%;
+        color: #211812;
+        background: #fff6e5;
+        box-shadow: 0 12px 34px rgba(0, 0, 0, 0.25);
+        font-size: 1.35rem;
+        line-height: 1;
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      .signup {
+        display: grid;
+        gap: 10px;
+      }
+
+      .signup input {
+        width: 100%;
+        min-height: 48px;
+        padding: 0 14px;
+        border: 1px solid #d8c6aa;
+        border-radius: 8px;
+        color: #24170f;
+        background: rgba(255, 255, 255, 0.6);
+      }
+
+      .signup button {
+        min-height: 48px;
+        border: 0;
+        border-radius: 8px;
+        color: #fff7eb;
+        background: var(--red);
+        font-weight: 700;
+      }
+
+      .thanks {
+        display: none;
+        color: var(--green);
+        font-weight: 900;
+      }
+
+      .signed-up .signup {
+        display: none;
+      }
+
+      .signed-up .thanks {
+        display: block;
+      }
+
+      @keyframes pulse {
+        70% {
+          box-shadow: 0 0 0 10px rgba(119, 226, 168, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(119, 226, 168, 0);
+        }
+      }
+
+      @media (max-width: 820px) {
+        .topbar {
+          padding-top: 12px;
+        }
+
+        .hero {
+          padding: 72px 24px 32px;
+        }
+
+        .hero::after {
+          background:
+            linear-gradient(to bottom, rgba(0, 0, 0, 0.5), transparent 30%),
+            linear-gradient(to top, rgba(0, 0, 0, 0.28), transparent 26%);
+        }
+
+        .book-object {
+          width: min(70vh, 86vw);
+          max-width: 86vw;
+        }
+
+        .registration-open .book-object {
+          transform: translateY(-14vh) scale(0.92);
+        }
+
+        .registration-open .cover-art {
+          opacity: 0.45;
+          transform: rotateY(-126deg);
+        }
+
+        .author-note {
+          top: auto;
+          right: 24px;
+          bottom: 30px;
+          width: min(48vw, 240px);
+          transform: none;
+        }
+
+        .registration-open .author-note {
+          transform: translateY(16px);
+        }
+
+        .waitlist-panel,
+        .registration-open .waitlist-panel {
+          transform: translate(-50%, -50%) scale(1);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 1ms !important;
+          scroll-behavior: auto !important;
+          transition-duration: 1ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <header class="topbar" aria-label="Book release status">
+        <a
+          class="facebook-link"
+          href="https://www.facebook.com/profile.php?id=61592880281977"
+          aria-label="Open The Last Delivery Facebook page"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M14.2 8.4V6.9c0-.7.5-.9.9-.9h2.2V2.2L14 2.1c-3.6 0-4.4 2.7-4.4 4.4v1.9H6.8v4.3h2.8V22h4.5v-9.3h3.1l.5-4.3h-3.5Z" />
+          </svg>
+        </a>
+        <div class="counter" aria-live="polite">
+          <span class="pulse" aria-hidden="true"></span>
+          <strong id="counter">428</strong>
+          <span>readers waiting</span>
+        </div>
+      </header>
+
+      <section class="hero" aria-label="The Last Delivery waitlist">
+        <div class="cover-fill" aria-hidden="true">
+          <div class="book-object">
+            <div class="inside-page"></div>
+            <div class="cover-art"></div>
+          </div>
+        </div>
+
+        <div class="hero-copy">
+          <p class="hero-title">
+            <span>One last job.</span>
+            <span class="hero-title-secondary">No going back.</span>
+          </p>
+          <p class="hero-text">
+            Join the release waitlist and get access as soon as the book opens.
+          </p>
+          <div class="actions">
+            <button class="register" type="button" data-open-book>
+              Register for the release
+            </button>
+          </div>
+        </div>
+
+        <aside class="author-note" aria-label="About the author">
+          <h2>P. Murphy</h2>
+          <p>
+            This is my first real shot at writing, and I am equal parts nervous
+            and thrilled to share it. I would truly love to hear what stays with
+            you after <em>The Last Delivery</em>.
+          </p>
+        </aside>
+
+        <div class="waitlist-panel" id="book-form" role="dialog" aria-modal="true" aria-labelledby="form-title">
+          <button class="close" type="button" aria-label="Close registration" id="close-book">x</button>
+          <h2 id="form-title">Join the waitlist.</h2>
+          <p>
+            Get first access when the book is released. This is where the live
+            Mailchimp, ConvertKit, Beehiiv, or custom form can connect.
+          </p>
+          <form class="signup" id="signup">
+            <label>
+              <span class="sr-only">Email address</span>
+              <input type="email" name="email" placeholder="Email address" required />
+            </label>
+            <button type="submit">Reserve my place</button>
+          </form>
+          <p class="thanks">You are on the list. The counter has moved too.</p>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const closeBook = document.querySelector("#close-book");
+      const signup = document.querySelector("#signup");
+      const bookForm = document.querySelector("#book-form");
+      const counter = document.querySelector("#counter");
+      const waitlistCountKey = "the-last-delivery-waitlist-count";
+
+      const renderCount = (value) => {
+        counter.textContent = String(value);
+      };
+
+      const getStoredCount = () => {
+        const stored = Number(localStorage.getItem(waitlistCountKey));
+        return Number.isFinite(stored) && stored >= 428 ? stored : 428;
+      };
+
+      const setStoredCount = (value) => {
+        localStorage.setItem(waitlistCountKey, String(value));
+        renderCount(value);
+      };
+
+      renderCount(getStoredCount());
+
+      document.querySelector("[data-open-book]").addEventListener("click", () => {
+        bookForm.classList.remove("signed-up");
+        document.body.classList.add("registration-open");
+      });
+
+      closeBook.addEventListener("click", () => {
+        document.body.classList.remove("registration-open");
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          document.body.classList.remove("registration-open");
+        }
+      });
+
+      signup.addEventListener("submit", (event) => {
+        event.preventDefault();
+        bookForm.classList.add("signed-up");
+        setStoredCount(getStoredCount() + 1);
+      });
+
+      window.addEventListener("storage", (event) => {
+        if (event.key === waitlistCountKey) {
+          renderCount(getStoredCount());
+        }
+      });
+    </script>
+  </body>
+</html>
